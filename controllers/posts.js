@@ -8,7 +8,6 @@ async function index(req, res){
     if(published){
         const boolpublished = published == "true"
         filtri.published = boolpublished
-    
     }
 
     if(parola){
@@ -18,7 +17,11 @@ async function index(req, res){
     }
 
     const data = await prisma.post.findMany({
-        where: filtri
+        where: filtri,
+        include: {
+            category: true,
+            tags: true
+        }
     })
     // console.log(data)
     return res.json(data)
@@ -51,7 +54,17 @@ async function store(req, res){
             slug: datiIngresso.slug,
             image: datiIngresso.image,
             content: datiIngresso.content,
-            published: datiIngresso.published
+            published: datiIngresso.published,
+            category: {
+                create: {
+                    title: datiIngresso.category,
+                }
+            },
+            tags: {
+                create: {
+                    title: datiIngresso.tags
+                }
+            }  
         }
     })
 
